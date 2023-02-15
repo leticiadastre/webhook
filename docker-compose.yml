@@ -7,7 +7,7 @@ services:
       context: ./
       dockerfile: Dockerfile
     volumes:
-      - ./sintegra/:/sintegra
+      - ./sintegre/:/sintegre
     command: sleep 10000
     ports:
       - "8080:8080"
