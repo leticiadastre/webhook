@@ -144,9 +144,12 @@ public class WebhookService {
                     log.error("Could not download the file. Status code " + statusCode);
                     log.error("Please try again..");
                 }
+                asyncHttpClient.close();
                 return statusCode;
 
             } catch (FileNotFoundException | InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
 
