@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>sintegra-spring</artifactId>
+    <artifactId>sintegre-spring</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>sintegra-spring</name>
     <description>sintegra-spring</description>

@@ -1,10 +1,9 @@
-package com.example.sintegraspring.services;
+package com.example.sintegrespring.services;
 
-import com.example.sintegraspring.models.WebhookRequestModel;
-import com.example.sintegraspring.utils.ConfigProperties;
-import com.example.sintegraspring.utils.MineTypes;
+import com.example.sintegrespring.models.WebhookRequestModel;
+import com.example.sintegrespring.utils.ConfigProperties;
+import com.example.sintegrespring.utils.MineTypes;
 import io.netty.handler.codec.http.HttpHeaders;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.asynchttpclient.AsyncHandler;
 import org.asynchttpclient.AsyncHttpClient;
@@ -19,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
@@ -28,15 +28,26 @@ import static org.asynchttpclient.Dsl.asyncHttpClient;
 
 @Service
 @Slf4j
-@AllArgsConstructor
 public class WebhookService {
 
 
-    private final ConfigProperties directoryName;
+    private  ConfigProperties directoryName;
 
-    private final MineTypes mimeTypes;
+    private MineTypes mimeTypes;
+
+    private String fileName = "";
+
+    private String formattedDate = "";
+
+    public WebhookService(ConfigProperties directoryName, MineTypes mimeTypes) {
+        this.directoryName = directoryName;
+        this.mimeTypes = mimeTypes;
+    }
 
 
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
     private static String formatDate(Date date) {
         return new SimpleDateFormat("yyyy-MM-dd").format(date);
@@ -88,7 +99,7 @@ public class WebhookService {
         log.info("Starting process hook");
         String fileExtension = getExtensionFile(requestModel.url());
         AsyncHttpClient asyncHttpClient = asyncHttpClient();
-        String formattedDate = formatDate(requestModel.periodicidade());
+        this.formattedDate = formatDate(requestModel.periodicidade());
         File directory = getDirectory(this.directoryName.getName(), requestModel.nome());
         File file = createFile(formattedDate, directory, fileExtension);
         if (this.exists(file)) {
@@ -112,6 +123,12 @@ public class WebhookService {
                             @Override
                             public State onHeadersReceived(HttpHeaders headers) throws Exception {
                                 log.info("onHeadersReceived has been called " + headers);
+
+                                var name = headers.get("Content-Disposition");
+                                if (name != null) {
+                                    String fileName = name.replaceFirst("(?i)^.*filename=\"?([^\"]+)\"?.*$", "$1");
+                                    setFileName(fileName);
+                                }
                                 return State.CONTINUE;
                             }
 
@@ -140,6 +157,14 @@ public class WebhookService {
                 if (HttpStatus.OK.value() == statusCode) {
                     log.info("File has been download successfully");
                     log.info("File has been saved in " + file.getAbsolutePath());
+
+                    if (!this.fileName.equals("")) {
+                        log.info("Changing file name to standard");
+                        File newFile = new File(file.getParent(), this.fileName);
+                        Files.move(file.toPath(), newFile.toPath());
+                        log.info("File has been renamed");
+                    }
+
                 } else {
                     log.error("Could not download the file. Status code " + statusCode);
                     log.error("Please try again..");
@@ -152,7 +177,6 @@ public class WebhookService {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
         }
     }
 

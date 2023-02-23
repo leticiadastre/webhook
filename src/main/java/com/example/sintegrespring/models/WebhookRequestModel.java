@@ -1,4 +1,4 @@
-package com.example.sintegraspring.models;
+package com.example.sintegrespring.models;
 
 
 import java.util.Date;

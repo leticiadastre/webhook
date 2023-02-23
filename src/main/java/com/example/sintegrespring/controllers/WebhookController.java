@@ -1,9 +1,9 @@
-package com.example.sintegraspring.controllers;
+package com.example.sintegrespring.controllers;
 
-import com.example.sintegraspring.models.WebhookRequestModel;
-import com.example.sintegraspring.services.WebhookService;
-import com.example.sintegraspring.utils.ConfigProperties;
-import com.example.sintegraspring.utils.FileAssert;
+import com.example.sintegrespring.models.WebhookRequestModel;
+import com.example.sintegrespring.services.WebhookService;
+import com.example.sintegrespring.utils.ConfigProperties;
+import com.example.sintegrespring.utils.FileAssert;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;

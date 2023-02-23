@@ -1,13 +1,13 @@
-package com.example.sintegraspring;
+package com.example.sintegrespring;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SintegraSpringApplication {
+public class SintegreSpringApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SintegraSpringApplication.class, args);
+        SpringApplication.run(SintegreSpringApplication.class, args);
     }
 
 }

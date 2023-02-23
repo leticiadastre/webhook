@@ -1,4 +1,4 @@
-package com.example.sintegraspring.utils;
+package com.example.sintegrespring.utils;
 
 import org.springframework.stereotype.Component;
 
