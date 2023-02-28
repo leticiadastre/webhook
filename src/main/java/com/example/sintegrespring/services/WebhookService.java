@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
@@ -127,6 +128,11 @@ public class WebhookService {
                                 var name = headers.get("Content-Disposition");
                                 if (name != null) {
                                     String fileName = name.replaceFirst("(?i)^.*filename=\"?([^\"]+)\"?.*$", "$1");
+                                    fileName = fileName.replaceAll("[^A-Za-z0-9()\\[\\]\\.\\_\\-]", "");
+                                    if (!fileName.contains(fileExtension)){
+                                        fileName = fileName + "." + fileExtension;
+                                    }
+
                                     setFileName(fileName);
                                 }
                                 return State.CONTINUE;
@@ -161,7 +167,7 @@ public class WebhookService {
                     if (!this.fileName.equals("")) {
                         log.info("Changing file name to standard");
                         File newFile = new File(file.getParent(), this.fileName);
-                        Files.move(file.toPath(), newFile.toPath());
+                        Files.copy(file.toPath(), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                         log.info("File has been renamed");
                     }
 
@@ -169,6 +175,8 @@ public class WebhookService {
                     log.error("Could not download the file. Status code " + statusCode);
                     log.error("Please try again..");
                 }
+                stream.close();
+                file.delete();
                 asyncHttpClient.close();
                 return statusCode;
 
